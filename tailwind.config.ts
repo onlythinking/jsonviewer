@@ -8,6 +8,10 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      screens: {
+        'xs': '475px',
+        'touch': {'raw': '(hover: none) and (pointer: coarse)'},
+      },
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",

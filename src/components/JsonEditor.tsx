@@ -178,177 +178,204 @@ export default function JsonEditor({ className }: JsonEditorProps) {
   }, [input, validateAndProcess])
 
   return (
-    <div className={`bg-white rounded-xl shadow-lg overflow-hidden ${className}`}>
-      <div className="grid grid-cols-1 lg:grid-cols-2 min-h-[600px]">
-        {/* 输入区域 */}
-        <div className="border-r border-gray-200">
-          <div className="bg-gray-50 px-6 py-4 border-b border-gray-200">
-            <h2 className="text-lg font-semibold text-gray-800">输入JSON数据</h2>
-          </div>
-          
-          <div className="p-6">
+    <div className={`bg-white border border-gray-200 overflow-hidden ${className}`}>
+      <div className="flex flex-col lg:flex-row min-h-[400px] lg:min-h-[700px]">
+        {/* 左侧输入区域 */}
+        <div className="flex-1 border-b lg:border-b-0 lg:border-r border-gray-200">
+          <div className="p-3 sm:p-4">
             <textarea
               ref={inputRef}
               value={input}
               onChange={(e) => handleInputChange(e.target.value)}
-              placeholder="请输入JSON数据..."
-              className="code-editor w-full h-96 resize-none"
+              placeholder="请输入json数据..."
+              className="w-full h-48 sm:h-64 lg:h-80 p-3 sm:p-4 border border-gray-300 rounded font-mono text-sm resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent touch-manipulation"
               spellCheck={false}
             />
             
-            {/* 输入工具栏 */}
-            <div className="flex flex-wrap gap-3 mt-4 pt-4 border-t border-gray-200">
-              <button
-                onClick={handleFormat}
-                disabled={isLoading}
-                className="btn-primary"
-              >
-                {isLoading ? '处理中...' : '格式化'}
-              </button>
-              <button
-                onClick={handleCompress}
-                disabled={isLoading}
-                className="btn-secondary"
-              >
-                压缩
-              </button>
-              <button onClick={handleClear} className="btn-secondary">
-                清空
-              </button>
-              <button onClick={handleCopy} className="btn-secondary">
-                复制结果
-              </button>
-              <button onClick={handleExample} className="btn-secondary">
-                示例
-              </button>
-            </div>
-
-            {/* 选项 */}
-            <div className="flex flex-wrap gap-4 mt-4">
-              <label className="flex items-center cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={showLineNumbers}
-                  onChange={(e) => setShowLineNumbers(e.target.checked)}
-                  className="mr-2 rounded"
-                />
-                显示行号
-              </label>
-              <label className="flex items-center cursor-pointer">
+            {/* 工具栏 */}
+            <div className="flex flex-wrap items-center gap-1 sm:gap-2 mt-3 sm:mt-4 p-2 bg-gray-50 border border-gray-300 rounded">
+              {/* 主要操作按钮 */}
+              <div className="flex flex-wrap gap-1 sm:gap-2 w-full sm:w-auto">
+                <button
+                  onClick={handleFormat}
+                  disabled={isLoading}
+                  className="flex-1 sm:flex-none px-2 sm:px-3 py-2 text-xs sm:text-sm border border-gray-300 rounded bg-white hover:bg-gray-50 active:bg-gray-100 flex items-center justify-center gap-1 min-h-[36px] touch-manipulation"
+                >
+                  <svg className="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  </svg>
+                  <span className="hidden xs:inline">{isLoading ? '处理中...' : '格式化'}</span>
+                </button>
+                
+                <button
+                  onClick={handleCompress}
+                  disabled={isLoading}
+                  className="flex-1 sm:flex-none px-2 sm:px-3 py-2 text-xs sm:text-sm border border-gray-300 rounded bg-white hover:bg-gray-50 active:bg-gray-100 flex items-center justify-center gap-1 min-h-[36px] touch-manipulation"
+                >
+                  <svg className="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4" />
+                  </svg>
+                  <span className="hidden xs:inline">压缩</span>
+                </button>
+                
+                <button 
+                  onClick={() => setShowLineNumbers(!showLineNumbers)} 
+                  className={`flex-1 sm:flex-none px-2 sm:px-3 py-2 text-xs sm:text-sm border border-gray-300 rounded ${showLineNumbers ? 'bg-green-100 text-green-700' : 'bg-white hover:bg-gray-50'} active:bg-gray-100 flex items-center justify-center gap-1 min-h-[36px] touch-manipulation`}
+                >
+                  <svg className="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14" />
+                  </svg>
+                  <span className="hidden sm:inline">行号</span>
+                </button>
+              </div>
+              
+              {/* 辅助操作按钮 */}
+              <div className="flex flex-wrap gap-1 sm:gap-2 w-full sm:w-auto mt-1 sm:mt-0">
+                <button onClick={handleClear} className="flex-1 sm:flex-none px-2 sm:px-3 py-2 text-xs sm:text-sm border border-gray-300 rounded bg-white hover:bg-gray-50 active:bg-gray-100 flex items-center justify-center gap-1 min-h-[36px] touch-manipulation">
+                  <svg className="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                  </svg>
+                  <span className="hidden xs:inline">清空</span>
+                </button>
+                
+                <button onClick={handleCopy} className="flex-1 sm:flex-none px-2 sm:px-3 py-2 text-xs sm:text-sm border border-gray-300 rounded bg-white hover:bg-gray-50 active:bg-gray-100 flex items-center justify-center gap-1 min-h-[36px] touch-manipulation">
+                  <svg className="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                  </svg>
+                  <span className="hidden xs:inline">复制</span>
+                </button>
+                
+                <button onClick={handleExample} className="flex-1 sm:flex-none px-2 sm:px-3 py-2 text-xs sm:text-sm border border-gray-300 rounded bg-white hover:bg-gray-50 active:bg-gray-100 flex items-center justify-center gap-1 min-h-[36px] touch-manipulation">
+                  <svg className="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                  </svg>
+                  <span className="hidden xs:inline">示例</span>
+                </button>
+              </div>
+              
+              {/* 配置选项 */}
+              <label className="flex items-center cursor-pointer ml-0 sm:ml-2 mt-1 sm:mt-0 w-full sm:w-auto justify-center sm:justify-start min-h-[36px]">
                 <input
                   type="checkbox"
                   checked={preserveEscape}
                   onChange={(e) => setPreserveEscape(e.target.checked)}
-                  className="mr-2 rounded"
+                  className="mr-1 sm:mr-2 text-green-600 rounded focus:ring-green-500 w-4 h-4 touch-manipulation"
                 />
-                保留转义
+                <span className="text-xs sm:text-sm text-gray-600">保留转义</span>
               </label>
             </div>
-
-            {/* 安全警告 */}
-            {securityWarnings.length > 0 && (
-              <div className="mt-4 p-4 bg-orange-50 border border-orange-200 rounded-lg">
-                <div className="flex items-start">
-                  <svg className="w-5 h-5 text-orange-600 mr-2 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L5.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
-                  </svg>
-                  <div>
-                    <p className="text-orange-700 font-medium">安全提示</p>
-                    {securityWarnings.map((warning, index) => (
-                      <p key={index} className="text-orange-600 text-sm mt-1">
-                        {warning}
-                      </p>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* 错误信息 */}
-            {!validationResult.isValid && validationResult.error && (
-              <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded-lg">
-                <div className="flex items-start">
-                  <svg className="w-5 h-5 text-red-600 mr-2 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                  <div>
-                    <p className="text-red-600 font-medium">JSON语法错误</p>
-                    <p className="text-red-500 text-sm mt-1">
-                      第 {validationResult.error.line} 行，第 {validationResult.error.column} 列：
-                      {validationResult.error.message}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            )}
           </div>
         </div>
 
-        {/* 输出区域 */}
-        <div>
-          <div className="bg-gray-50 px-6 py-4 border-b border-gray-200">
-            <div className="flex items-center justify-between">
-              <h2 className="text-lg font-semibold text-gray-800">格式化结果</h2>
-              {validationResult.isValid && (
-                <span className="text-green-600 text-sm font-medium flex items-center">
-                  <svg className="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+        {/* 右侧输出区域 */}
+        <div className="flex-1">
+          <div className="p-3 sm:p-4">
+            {output ? (
+              <div className="relative">
+                <div
+                  ref={outputRef}
+                  className={`w-full h-48 sm:h-64 lg:h-80 p-3 sm:p-4 border border-gray-300 rounded bg-gray-50 overflow-auto font-mono text-xs sm:text-sm whitespace-pre-wrap touch-manipulation ${
+                    showLineNumbers ? 'pl-8 sm:pl-10 lg:pl-12' : ''
+                  }`}
+                  style={{
+                    lineHeight: '1.4',
+                    position: 'relative'
+                  }}
+                >
+                  <JsonHighlight 
+                    json={output} 
+                    showLineNumbers={showLineNumbers}
+                  />
+                </div>
+                <div className="mt-2 text-xs text-gray-500 text-center sm:text-left">
+                  可点击键值进行编辑
+                </div>
+              </div>
+            ) : (
+              <div className="w-full h-48 sm:h-64 lg:h-80 border border-gray-300 rounded bg-gray-50 flex items-center justify-center text-gray-400">
+                <div className="text-center p-4">
+                  <svg className="w-8 h-8 sm:w-12 sm:h-12 mx-auto mb-2 sm:mb-3 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                   </svg>
-                  JSON有效
-                </span>
+                  <p className="text-xs sm:text-sm">格式化后的JSON将显示在这里</p>
+                </div>
+              </div>
+            )}
+            
+            {/* 状态指示器 */}
+            <div className="mt-3 sm:mt-4 flex flex-col sm:flex-row items-center justify-between gap-2">
+              <div className="flex items-center gap-2 sm:gap-4">
+                {validationResult.isValid ? (
+                  <span className="text-green-600 text-xs sm:text-sm font-medium flex items-center">
+                    <svg className="w-3 h-3 sm:w-4 sm:h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                    </svg>
+                    JSON有效
+                  </span>
+                ) : (
+                  validationResult.error && (
+                    <span className="text-red-600 text-xs sm:text-sm font-medium flex items-center">
+                      <svg className="w-3 h-3 sm:w-4 sm:h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                      </svg>
+                      JSON无效
+                    </span>
+                  )
+                )}
+              </div>
+              
+              {stats && (
+                <div className="text-xs text-gray-500 text-center sm:text-right">
+                  <span className="inline-block sm:hidden">{stats.size}字符 {stats.keys}键 {stats.depth}层</span>
+                  <span className="hidden sm:inline">{stats.size} 字符, {stats.keys} 键, {stats.depth} 层深度</span>
+                </div>
               )}
             </div>
           </div>
-
-          <div className="p-6">
-            {output ? (
-              <div
-                ref={outputRef}
-                className={`code-editor h-96 whitespace-pre-wrap ${
-                  showLineNumbers ? 'pl-12' : ''
-                }`}
-                style={{
-                  background: '#fafafa',
-                  lineHeight: '1.5',
-                  position: 'relative'
-                }}
-              >
-                <JsonHighlight 
-                  json={output} 
-                  showLineNumbers={showLineNumbers}
-                />
-              </div>
-            ) : (
-              <div className="h-96 bg-gray-50 border border-gray-300 rounded-lg flex items-center justify-center text-gray-500">
-                <div className="text-center">
-                  <svg className="w-12 h-12 mx-auto mb-3 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                  </svg>
-                  <p>请在左侧输入JSON数据</p>
-                  <p className="text-sm text-gray-400 mt-1">点击&ldquo;格式化&rdquo;按钮进行解析</p>
-                </div>
-              </div>
-            )}
-
-            {/* 统计信息 */}
-            {stats && (
-              <div className="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-                <h3 className="font-medium text-blue-800 mb-2">数据统计</h3>
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-sm text-blue-600">
-                  <div>大小: {stats.size} 字符</div>
-                  <div>键: {stats.keys} 个</div>
-                  <div>对象: {stats.objects} 个</div>
-                  <div>数组: {stats.arrays} 个</div>
-                  <div>字符串: {stats.strings} 个</div>
-                  <div>数字: {stats.numbers} 个</div>
-                  <div>布尔: {stats.booleans} 个</div>
-                  <div>深度: {stats.depth} 层</div>
-                </div>
-              </div>
-            )}
-          </div>
         </div>
       </div>
+      
+      {/* 底部错误和警告信息 */}
+      {(securityWarnings.length > 0 || (!validationResult.isValid && validationResult.error)) && (
+        <div className="border-t border-gray-200">
+          {/* 安全警告 */}
+          {securityWarnings.length > 0 && (
+            <div className="p-3 bg-orange-50 border-b border-orange-200">
+              <div className="flex items-start">
+                <svg className="w-4 h-4 text-orange-600 mr-2 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L5.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
+                </svg>
+                <div>
+                  <p className="text-orange-700 font-medium text-sm">安全提示</p>
+                  {securityWarnings.map((warning, index) => (
+                    <p key={index} className="text-orange-600 text-xs mt-1">
+                      {warning}
+                    </p>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* 错误信息 */}
+          {!validationResult.isValid && validationResult.error && (
+            <div className="p-3 bg-red-50">
+              <div className="flex items-start">
+                <svg className="w-4 h-4 text-red-600 mr-2 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <div>
+                  <p className="text-red-600 font-medium text-sm">JSON语法错误</p>
+                  <p className="text-red-500 text-xs mt-1">
+                    第 {validationResult.error.line} 行，第 {validationResult.error.column} 列：
+                    {validationResult.error.message}
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
     </div>
   )
 }
@@ -360,17 +387,17 @@ function JsonHighlight({ json, showLineNumbers }: { json: string; showLineNumber
   return (
     <>
       {showLineNumbers && (
-        <div className="absolute left-0 top-0 bottom-0 w-10 bg-gray-100 border-r border-gray-300 flex flex-col">
+        <div className="absolute left-0 top-0 bottom-0 w-6 sm:w-8 lg:w-10 bg-gray-100 border-r border-gray-300 flex flex-col">
           {lines.map((_, index) => (
-            <div key={index} className="text-xs text-gray-400 text-right pr-2 h-6 leading-6">
+            <div key={index} className="text-xs text-gray-400 text-right pr-1 sm:pr-2 h-5 sm:h-6 leading-5 sm:leading-6">
               {index + 1}
             </div>
           ))}
         </div>
       )}
-      <div className="font-mono text-sm">
+      <div className="font-mono text-xs sm:text-sm">
         {lines.map((line, index) => (
-          <div key={index} className="h-6 leading-6">
+          <div key={index} className="h-5 sm:h-6 leading-5 sm:leading-6">
             {highlightJsonLine(line)}
           </div>
         ))}
