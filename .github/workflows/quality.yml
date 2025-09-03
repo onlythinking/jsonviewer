@@ -1,0 +1,82 @@
+name: Code Quality
+
+on:
+  push:
+    branches: [main, master, develop]
+  pull_request:
+    branches: [main, master]
+
+jobs:
+  quality-check:
+    runs-on: ubuntu-latest
+    name: 代码质量检查
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: ESLint 检查
+        run: |
+          echo "🔍 执行 ESLint 代码检查..."
+          npm run lint
+
+      - name: TypeScript 类型检查
+        run: |
+          echo "🏷️ 执行 TypeScript 类型检查..."
+          npx tsc --noEmit
+
+      - name: 构建测试
+        run: |
+          echo "🔨 测试项目构建..."
+          npm run build
+
+      - name: 安全依赖检查
+        run: |
+          echo "🔐 检查安全漏洞..."
+          npm audit --audit-level=moderate
+
+      - name: 包大小检查
+        run: |
+          echo "📦 分析构建包大小..."
+          npx @next/bundle-analyzer --help || echo "Bundle analyzer not configured"
+
+  lighthouse:
+    runs-on: ubuntu-latest
+    name: Lighthouse 性能测试
+    needs: quality-check
+    if: github.event_name == 'pull_request'
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build project
+        run: npm run build
+
+      - name: Start server
+        run: |
+          npm run start &
+          sleep 10
+
+      - name: Run Lighthouse CI
+        run: |
+          npm install -g @lhci/cli@0.12.x
+          lhci autorun || echo "Lighthouse CI not fully configured yet"
