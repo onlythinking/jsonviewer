@@ -3,7 +3,7 @@
   "outputDirectory": ".next",
   "framework": "nextjs",
   "installCommand": "npm install",
-  "regions": ["sin1", "hkg1", "nrt1"],
+  "regions": ["hkg1"],
   "headers": [
     {
       "source": "/(.*)",
