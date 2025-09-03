@@ -35,12 +35,6 @@
 - **现代化UI** - 基于Tailwind CSS的美观界面
 - **性能优化** - 静态生成，首屏加载快速
 
-## 📸 截图预览
-
-<div align="center">
-<img src="https://via.placeholder.com/800x500/f8f9fa/6c757d?text=JSON+格式化工具+主界面" alt="JSON格式化工具主界面" />
-</div>
-
 ## 🚀 快速开始
 
 ### 环境要求
